@@ -8,14 +8,14 @@ Add the following to your Gemfile:
 
 ```ruby
 gem 'capejs-rails'
-gem 'sass-rails', github: 'rails/sass-rails', branch: 'master'
-gem 'sprockets-rails', github: 'rails/sprockets-rails', branch: 'master'
-gem 'sprockets', github: 'rails/sprockets', branch: 'master'
+gem 'sass-rails', '~> 6.0.0.beta1'
+gem 'sprockets', '~> 4.0.0.beta2'
+gem 'sprockets-rails'
 gem 'babel-transpiler'
 ```
 
 Add the following directive to your `application.js`:
 
 ```javascript
-//= require capejs
+//= require cape
 ```
