@@ -17,6 +17,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'railties', '>= 4.2.0', '< 5.1'
 
   s.files = Dir[
+    'app/**/*',
     'lib/**/*',
     'README.md',
     'LICENSE'
