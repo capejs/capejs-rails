@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.authors     = [ 'Tsutomu Kuroda' ]
   s.email       = [ 't-kuroda@oiax.jp' ]
   s.homepage    = 'https://github.com/oiax/capejs-rails'
-  s.summary     = 'Use Cape.JS with Rails 5+'
-  s.description = 'This gem provides Cape.JS for your Rails 5+ application.'
+  s.summary     = 'Use Cape.JS with Rails'
+  s.description = 'This gem provides Cape.JS for your Rails application.'
   s.license     = 'MIT'
 
   s.required_ruby_version = '>= 2.2.2'
