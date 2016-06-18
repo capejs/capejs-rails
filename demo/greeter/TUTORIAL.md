@@ -4,11 +4,35 @@
 
 ```text
 $ ruby -v # Must be 2.2.2 or higher
-$ rails -v # Must be 5.0.0.rc1 or higher
+$ rails -v # Must be 5.0.0.rc1
 ```
+
+This tutorial is based on the Ruby on Rails 5.0.0.rc1.
 
 ## Creating the Rails app skeleton
 
 ```text
 $ rails new greeter -BJT
+```
+
+## Setting up the capejs-rails
+
+Remove the followin line from the `Gemfile`:
+
+```ruby
+gem 'sass-rails', '~> 5.0'
+```
+
+Add the following lines to the `Gemfile`:
+
+```ruby
+gem 'capejs-rails'
+gem 'sass-rails', '~> 6.0.0.beta1'
+gem 'sprockets', '~> 4.0.0.beta2'
+gem 'sprockets-rails'
+gem 'babel-transpiler'
+```
+
+```text
+$ bin/bundle
 ```

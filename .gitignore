@@ -1,4 +1,4 @@
 .bundle
 .ruby-version
-Gemfile.lock
+/Gemfile.lock
 pkg
