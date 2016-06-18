@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.description = 'This gem provides Cape.JS for your Rails application.'
   s.license     = 'MIT'
 
-  s.required_ruby_version = '>= 2.2.2'
+  s.required_ruby_version = '>= 1.9.3'
   s.required_rubygems_version = '>= 1.8.11'
 
   s.add_dependency 'railties', '>= 4.2.0', '< 5.1'
