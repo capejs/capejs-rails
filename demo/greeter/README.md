@@ -10,6 +10,6 @@ Run following commands on the directory that the file `README.md` exists on.
 
 ```text
 $ bin/bundle
-$ bin/rake db:setup
+$ bin/rails db:setup
 $ bin/rails s
 ```

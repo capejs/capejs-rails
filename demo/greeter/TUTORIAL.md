@@ -135,7 +135,7 @@ $ touch app/assets/javascripts/router.es6
 Add these lines to `app/assets/javascripts/routes.es6`:
 
 ```javascript
-window.router = new Cape.Router();
+window.router = new Cape.Router()
 
 router.draw(m => {
   m.root('reception')
@@ -144,17 +144,16 @@ router.draw(m => {
 document.addEventListener("DOMContentLoaded", event => {
   window.router.mount('main')
   window.router.start()
-});
+})
 ```
 
 Reload your browser to see if the page is rendered without errors. Below the heading you will see a <p> element with following content:
 
 > Hi, I am Greeter. Nice to meet you!
 
-## Add the `VisitorForm` component
+## Add `VisitorForm` and `Thanks` components
 
-
-Edit `app/assets/javascripts/omponents/reception.es6` so that its content becomes like this:
+Edit `app/assets/javascripts/omponents/reception.es6`:
 
 ```javascript
 class Reception extends Cape.Component {
@@ -170,6 +169,7 @@ class Reception extends Cape.Component {
 
 ```text
 $ touch app/assets/javascripts/components/visitor_form.es6
+$ touch app/assets/javascripts/components/thanks.es6
 ```
 
 Add these lines to `app/assets/javascripts/components/visitor_form.es6`:
@@ -181,12 +181,25 @@ class VisitorForm extends Cape.Component {
     m.p("Please fill in your name on this form.")
     m.formFor('visitor', m => {
       m.div(m => {
-        m.labelFor('given_name', 'Given Name').sp().textField('name')
+        m.labelFor('given_name', 'Given Name').sp().textField('given_name')
       })
       m.div(m => {
-        m.labelFor('family_name', 'Family Name').sp().textField('name')
+        m.labelFor('family_name', 'Family Name').sp().textField('family_name')
       })
-      m.onclick(e => window.router.navigateTo('')).btn('Submit')
+      m.onclick(e => window.router.navigateTo('thanks')).btn('Submit')
+    })
+  }
+}
+```
+
+Add these lines to `app/assets/javascripts/components/thanks.es6`:
+
+```javascript
+class Thanks extends Cape.Component {
+  render(m) {
+    m.p("Thank you!")
+    m.div(m => {
+      m.onclick(e => window.router.navigateTo('')).btn('Return to the top page')
     })
   }
 }
@@ -200,10 +213,120 @@ window.router = new Cape.Router();
 router.draw(m => {
   m.root('reception')
   m.page('visitor_form')
+  m.page('thanks')
 })
 
 document.addEventListener("DOMContentLoaded", event => {
   window.router.mount('main')
   window.router.start()
 });
+```
+
+Reload your browser to check if the page is rendered without errors.
+You can see three pages in turn by clicking buttons.
+
+## Create `Visitor` model
+
+```text
+$ bin/rails g model visitor family_name:string given_name:string
+$ bin/rails db:migrate
+```
+
+Edit `app/models/visitor.rb`:
+
+```ruby
+class Visitor < ApplicationRecord
+  validates :family_name, :given_name, presence: true
+end
+```
+
+## Create `api/visitors` resources
+
+```text
+$ bin/rails g controller api/visitors
+```
+
+Edit `config/routes.rb`:
+
+```ruby
+Rails.application.routes.draw do
+  root 'top#index'
+
+  namespace :api do
+    resources :visitors, only: [ :index, :create ]
+  end
+end
+```
+
+Edit `app/controllers/api/visitors_controller.rb`:
+
+```ruby
+Rails.application.routes.draw do
+  root 'top#index'
+
+  namespace :api do
+    resources :visitors, only: [ :index, :create ]
+  end
+end
+```
+
+## Add the `VisitorListAgent` class
+
+```text
+$ mkdir -p app/assets/javascripts/agents
+$ touch app/assets/javascripts/agents/visitor_list_agent.es6
+```
+
+Add these lines to `app/assets/javascripts/components/agents.es6`:
+
+```javascript
+class VisitorListAgent extends Cape.CollectionAgent {
+  constructor(client, options) {
+    super(client, options);
+    this.resourceName = 'visitors';
+    this.basePath = '/api/';
+  }
+}
+```
+
+Edit `app/assets/javascripts/components/visitor_form.es6`:
+
+```javascript
+class VisitorForm extends Cape.Component {
+  init() {
+    this.agent = new VisitorListAgent(this)
+    this.refresh()
+  }
+
+  render(m) {
+    m.h2('Visitors Entry Form')
+    if (this.errors) {
+      m.p("You have errors. Please fix them and submit again.")
+    }
+    else {
+      m.p("Please fill in your name on this form.")
+    }
+    m.formFor('visitor', m => {
+      m.div(m => {
+        m.labelFor('given_name', 'Given Name').sp().textField('given_name')
+      })
+      m.div(m => {
+        m.labelFor('family_name', 'Family Name').sp().textField('family_name')
+      })
+      m.onclick(e => this.submit()).btn('Submit')
+    })
+  }
+
+  submit() {
+    this.agent.create(this.paramsFor('visitor'), data => {
+      if (data.result === 'Success') {
+        window.router.navigateTo('thanks')
+      }
+      else {
+        this.errors = data.errors
+        this.refresh()
+      }
+    })
+  }
+}
 ```
