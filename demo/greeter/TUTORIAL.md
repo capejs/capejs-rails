@@ -126,18 +126,27 @@ class Reception extends Cape.Component {
 }
 ```
 
-### Mouting the `Reception` component to the HTML document
+## Introducing the Cape.JS router
 
-Add these lines to `app/assets/javascripts/application.js`:
+```text
+$ touch app/assets/javascripts/router.es6
+```
+
+Add these lines to `app/assets/javascripts/components/reception.es6`:
 
 ```javascript
-document.addEventListener("DOMContentLoaded", function(event) {
-  var component = new Reception();
-  component.mount('main');
+window.router = new Cape.Router();
+
+router.draw(m => {
+  m.root('reception')
+})
+
+document.addEventListener("DOMContentLoaded", event => {
+  window.router.mount('main');
+  window.router.start();
 });
 ```
 
-Reload your browser to see if the page is rendered without errors.
-Below the heading you will see a `<p>` element with following content:
+Reload your browser to see if the page is rendered without errors. Below the heading you will see a <p> element with following content:
 
 > Hi, I am Greeter. Nice to meet you!
