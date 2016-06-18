@@ -132,7 +132,7 @@ class Reception extends Cape.Component {
 $ touch app/assets/javascripts/router.es6
 ```
 
-Add these lines to `app/assets/javascripts/components/reception.es6`:
+Add these lines to `app/assets/javascripts/routes.es6`:
 
 ```javascript
 window.router = new Cape.Router();
@@ -142,11 +142,68 @@ router.draw(m => {
 })
 
 document.addEventListener("DOMContentLoaded", event => {
-  window.router.mount('main');
-  window.router.start();
+  window.router.mount('main')
+  window.router.start()
 });
 ```
 
 Reload your browser to see if the page is rendered without errors. Below the heading you will see a <p> element with following content:
 
 > Hi, I am Greeter. Nice to meet you!
+
+## Add the `VisitorForm` component
+
+
+Edit `app/assets/javascripts/omponents/reception.es6` so that its content becomes like this:
+
+```javascript
+class Reception extends Cape.Component {
+  render(m) {
+    m.p("Hi, I am Greeter. Nice to meet you!")
+    m.div(m => {
+      m.onclick(e => window.router.navigateTo('visitor_form'))
+        .btn('Proceed to the Entry Form')
+    })
+  }
+}
+```
+
+```text
+$ touch app/assets/javascripts/components/visitor_form.es6
+```
+
+Add these lines to `app/assets/javascripts/components/visitor_form.es6`:
+
+```javascript
+class VisitorForm extends Cape.Component {
+  render(m) {
+    m.h2('Visitors Entry Form')
+    m.p("Please fill in your name on this form.")
+    m.formFor('visitor', m => {
+      m.div(m => {
+        m.labelFor('given_name', 'Given Name').sp().textField('name')
+      })
+      m.div(m => {
+        m.labelFor('family_name', 'Family Name').sp().textField('name')
+      })
+      m.onclick(e => window.router.navigateTo('')).btn('Submit')
+    })
+  }
+}
+```
+
+Edit `app/assets/javascripts/routes.es6` so that its content becomes like this:
+
+```javascript
+window.router = new Cape.Router();
+
+router.draw(m => {
+  m.root('reception')
+  m.page('visitor_form')
+})
+
+document.addEventListener("DOMContentLoaded", event => {
+  window.router.mount('main')
+  window.router.start()
+});
+```
