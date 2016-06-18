@@ -151,7 +151,7 @@ Reload your browser to see if the page is rendered without errors. Below the hea
 
 > Hi, I am Greeter. Nice to meet you!
 
-## Add `VisitorForm` and `Thanks` components
+## Adding `VisitorForm` and `Thanks` components
 
 Edit `app/assets/javascripts/omponents/reception.es6`:
 
@@ -225,7 +225,7 @@ document.addEventListener("DOMContentLoaded", event => {
 Reload your browser to check if the page is rendered without errors.
 You can see three pages in turn by clicking buttons.
 
-## Create `Visitor` model
+## Creating `Visitor` model
 
 ```text
 $ bin/rails g model visitor family_name:string given_name:string
@@ -240,7 +240,7 @@ class Visitor < ApplicationRecord
 end
 ```
 
-## Create `api/visitors` resources
+## Creating `api/visitors` resources
 
 ```text
 $ bin/rails g controller api/visitors
@@ -270,7 +270,7 @@ Rails.application.routes.draw do
 end
 ```
 
-## Add the `VisitorListAgent` class
+## Adding the `VisitorListAgent` class
 
 ```text
 $ mkdir -p app/assets/javascripts/agents
@@ -300,12 +300,120 @@ class VisitorForm extends Cape.Component {
 
   render(m) {
     m.h2('Visitors Entry Form')
-    if (this.errors) {
-      m.p("You have errors. Please fix them and submit again.")
-    }
-    else {
+    m.p("Please fill in your name on this form.")
+    m.formFor('visitor', m => {
+      m.div(m => {
+        m.labelFor('given_name', 'Given Name').sp().textField('given_name')
+      })
+      m.div(m => {
+        m.labelFor('family_name', 'Family Name').sp().textField('family_name')
+      })
+      m.onclick(e => this.submit()).btn('Submit')
+    })
+  }
+
+  submit() {
+    this.agent.create(this.paramsFor('visitor'), data => {
+      if (data.result === 'Success') {
+        window.router.navigateTo('thanks')
+      }
+      else {
+        this.refresh()
+      }
+    })
+  }
+}
+```
+
+## Showing error messages
+
+Edit `app/assets/javascripts/components/visitor_form.es6`:
+
+```javascript
+class VisitorForm extends Cape.Component {
+  init() {
+    this.agent = new VisitorListAgent(this)
+    this.refresh()
+  }
+
+  render(m) {
+    m.h2('Visitors Entry Form')
+    m.p("You have errors. Please fix them and submit again.")
+    if (this.errors) this.renderErrorMessages(m)
+    m.formFor('visitor', m => {
+      m.div(m => {
+        m.labelFor('given_name', 'Given Name').sp().textField('given_name')
+      })
+      m.div(m => {
+        m.labelFor('family_name', 'Family Name').sp().textField('family_name')
+      })
+      m.onclick(e => this.submit()).btn('Submit')
+    })
+  }
+
+  renderErrorMessages(m) {
+    m.div({ class: 'error-message' }, m => {
       m.p("Please fill in your name on this form.")
-    }
+      m.ul(m => {
+        this.errors.forEach(err => {
+          m.li(err)
+        })
+      })
+    })
+  }
+
+  submit() {
+    this.agent.create(this.paramsFor('visitor'), data => {
+      if (data.result === 'Success') {
+        window.router.navigateTo('thanks')
+      }
+      else {
+        this.errors = data.errors
+        this.refresh()
+      }
+    })
+  }
+}
+```
+
+## Refactoring with partial components
+
+```text
+$ mkdir -p app/assets/javascripts/partials
+$ touch app/assets/javascripts/partials/error_message_list.es6
+```
+
+Add these lines to `app/assets/javascripts/partials/error_message_list.es6`:
+
+```javascript
+class ErrorMessageList extends Cape.Partial {
+  render(m) {
+    m.div({ class: 'error-message' }, m => {
+      m.p("Please fill in your name on this form.")
+      m.ul(m => {
+        this.errors.forEach(err => {
+          m.li(err)
+        })
+      })
+    })
+  }
+}
+```
+
+Edit `app/assets/javascripts/components/visitor_form.es6`:
+
+```javascript
+class VisitorForm extends Cape.Component {
+  init() {
+    this.agent = new VisitorListAgent(this)
+    this.errorMessageList = new ErrorMessageList(this)
+    this.refresh()
+  }
+
+  render(m) {
+    m.h2('Visitors Entry Form')
+    m.p("You have errors. Please fix them and submit again.")
+    if (this.errors) this.errorMessageList.render(m)
     m.formFor('visitor', m => {
       m.div(m => {
         m.labelFor('given_name', 'Given Name').sp().textField('given_name')

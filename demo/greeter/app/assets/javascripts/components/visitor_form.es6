@@ -1,17 +1,14 @@
 class VisitorForm extends Cape.Component {
   init() {
     this.agent = new VisitorListAgent(this)
+    this.errorMessageList = new ErrorMessageList(this)
     this.refresh()
   }
 
   render(m) {
     m.h2('Visitors Entry Form')
-    if (this.errors) {
-      m.p("You have errors. Please fix them and submit again.")
-    }
-    else {
-      m.p("Please fill in your name on this form.")
-    }
+    m.p("You have errors. Please fix them and submit again.")
+    if (this.errors) this.errorMessageList.render(m)
     m.formFor('visitor', m => {
       m.div(m => {
         m.labelFor('given_name', 'Given Name').sp().textField('given_name')
