@@ -50,10 +50,27 @@ $ mkdir -p app/assets/javascripts
 $ touch app/assets/javascripts/application.js
 ```
 
-Add this line to the `app/assets/javascripts/application.js`:
+Add this line to `app/assets/javascripts/application.js`:
 
 ```javascript
 //= require cape
+//= require_tree .
+```
+
+## Editing `manifest.js`
+
+Add this line to `app/assets/config/manifest.js`:
+
+```javascript
+//= link_directory ../javascripts .js
+```
+
+## Editing `application.html.erb`
+
+Add this line to the bottom of `<head>` element's content:
+
+```erb
+    <%= javascript_include_tag 'application' %>
 ```
 
 ## Creating `generators.rb`
@@ -62,7 +79,7 @@ Add this line to the `app/assets/javascripts/application.js`:
 $ touch config/initializers/generators.rb
 ```
 
-Add these lines to the `config/initializers/generators.rb`:
+Add these lines to `config/initializers/generators.rb`:
 
 ```ruby
 Rails.application.config.generators do |g|
@@ -75,7 +92,7 @@ end
 
 ## Add a route to the `top#index` action
 
-Edit the `config/routes.rb` so that its content becomes like as:
+Edit `config/routes.rb` so that its content becomes like as:
 
 ```ruby
 Rails.application.routes.draw do
@@ -89,7 +106,7 @@ end
 $ bin/rails g controller top index
 ```
 
-Edit the `app/views/top/index.html.erb` so that its content becomes like as:
+Edit `app/views/top/index.html.erb` so that its content becomes like as:
 
 ```ruby
 <h1>Greeter</h1>
@@ -103,4 +120,37 @@ $ bin/rails s
 ```
 
 Open `http://localhost:3000/` with your browser to see if the page is rendered without errors.
-It should has just a single "Greeter" heading.
+It should have just a single "Greeter" heading.
+
+## Creating the `Reception` component
+
+```text
+$ mkdir -p app/assets/javascripts/components
+$ touch app/assets/javascripts/components/reception.es6
+```
+
+Edit `app/assets/javascripts/components/reception.es6` so that its content becomes like as:
+
+```javascript
+class Reception extends Cape.Component {
+  render(m) {
+    m.p("Hi, I am Greeter. Nice to meet you!")
+  }
+}
+```
+
+### Mouting the `Reception` component to the HTML document
+
+Add these lines to `app/assets/javascripts/application.js`:
+
+```javascript
+document.addEventListener("DOMContentLoaded", function(event) {
+  var component = new Reception();
+  component.mount('main');
+});
+```
+
+Reload your browser to see if the page is rendered without errors.
+Below the heading you will see a `<p>` element with following content:
+
+> Hi, I am Greeter. Nice to meet you!
