@@ -135,15 +135,15 @@ $ touch app/assets/javascripts/router.es6
 Add these lines to `app/assets/javascripts/routes.es6`:
 
 ```javascript
-window.router = new Cape.Router()
+var $router = new Cape.Router()
 
-router.draw(m => {
+$router.draw(m => {
   m.root('reception')
 })
 
 document.addEventListener("DOMContentLoaded", event => {
-  window.router.mount('main')
-  window.router.start()
+  $router.mount('main')
+  $router.start()
 })
 ```
 
@@ -160,7 +160,7 @@ class Reception extends Cape.Component {
   render(m) {
     m.p("Hi, I am Greeter. Nice to meet you!")
     m.div(m => {
-      m.onclick(e => window.router.navigateTo('visitor_form'))
+      m.onclick(e => $router.navigateTo('visitor_form'))
         .btn('Proceed to the Entry Form')
     })
   }
@@ -186,7 +186,7 @@ class VisitorForm extends Cape.Component {
       m.div(m => {
         m.labelFor('family_name', 'Family Name').sp().textField('family_name')
       })
-      m.onclick(e => window.router.navigateTo('thanks')).btn('Submit')
+      m.onclick(e => $router.navigateTo('thanks')).btn('Submit')
     })
   }
 }
@@ -199,7 +199,7 @@ class Thanks extends Cape.Component {
   render(m) {
     m.p("Thank you!")
     m.div(m => {
-      m.onclick(e => window.router.navigateTo('')).btn('Return to the top page')
+      m.onclick(e => $router.navigateTo('')).btn('Return to the top page')
     })
   }
 }
@@ -208,17 +208,17 @@ class Thanks extends Cape.Component {
 Edit `app/assets/javascripts/routes.es6` so that its content becomes like this:
 
 ```javascript
-window.router = new Cape.Router();
+var $router = new Cape.Router();
 
-router.draw(m => {
+$router.draw(m => {
   m.root('reception')
   m.page('visitor_form')
   m.page('thanks')
 })
 
 document.addEventListener("DOMContentLoaded", event => {
-  window.router.mount('main')
-  window.router.start()
+  $router.mount('main')
+  $router.start()
 });
 ```
 
@@ -315,7 +315,7 @@ class VisitorForm extends Cape.Component {
   submit() {
     this.agent.create(this.paramsFor('visitor'), data => {
       if (data.result === 'Success') {
-        window.router.navigateTo('thanks')
+        $router.navigateTo('thanks')
       }
       else {
         this.refresh()
@@ -338,7 +338,7 @@ class VisitorForm extends Cape.Component {
 
   render(m) {
     m.h2('Visitors Entry Form')
-    m.p("You have errors. Please fix them and submit again.")
+    m.p("Please fill in your name on this form.")
     if (this.errors) this.renderErrorMessages(m)
     m.formFor('visitor', m => {
       m.div(m => {
@@ -353,7 +353,7 @@ class VisitorForm extends Cape.Component {
 
   renderErrorMessages(m) {
     m.div({ class: 'error-message' }, m => {
-      m.p("Please fill in your name on this form.")
+      m.p("You have errors. Please fix them and submit again.")
       m.ul(m => {
         this.errors.forEach(err => {
           m.li(err)
@@ -365,7 +365,7 @@ class VisitorForm extends Cape.Component {
   submit() {
     this.agent.create(this.paramsFor('visitor'), data => {
       if (data.result === 'Success') {
-        window.router.navigateTo('thanks')
+        $router.navigateTo('thanks')
       }
       else {
         this.errors = data.errors
@@ -375,6 +375,9 @@ class VisitorForm extends Cape.Component {
   }
 }
 ```
+
+Reload your browser and click the "Submit" button without filling in the form.
+You will see the error messages such as "Family name can't be blank."
 
 ## Refactoring with partial components
 
@@ -389,9 +392,9 @@ Add these lines to `app/assets/javascripts/partials/error_message_list.es6`:
 class ErrorMessageList extends Cape.Partial {
   render(m) {
     m.div({ class: 'error-message' }, m => {
-      m.p("Please fill in your name on this form.")
+      m.p("You have errors. Please fix them and submit again.")
       m.ul(m => {
-        this.errors.forEach(err => {
+        this.parent.errors.forEach(err => {
           m.li(err)
         })
       })
@@ -412,7 +415,7 @@ class VisitorForm extends Cape.Component {
 
   render(m) {
     m.h2('Visitors Entry Form')
-    m.p("You have errors. Please fix them and submit again.")
+    m.p("Please fill in your name on this form.")
     if (this.errors) this.errorMessageList.render(m)
     m.formFor('visitor', m => {
       m.div(m => {
@@ -428,7 +431,7 @@ class VisitorForm extends Cape.Component {
   submit() {
     this.agent.create(this.paramsFor('visitor'), data => {
       if (data.result === 'Success') {
-        window.router.navigateTo('thanks')
+        $router.navigateTo('thanks')
       }
       else {
         this.errors = data.errors
@@ -438,3 +441,78 @@ class VisitorForm extends Cape.Component {
   }
 }
 ```
+
+## Listing registered visitors
+
+Edit `app/assets/javascripts/routes.es6`:
+
+```javascript
+var $router = new Cape.Router();
+
+$router.draw(m => {
+  m.root('reception')
+  m.page('visitor_form')
+  m.page('thanks')
+  m.many('visitors', { only: [ 'index'] })
+})
+
+document.addEventListener("DOMContentLoaded", event => {
+  $router.mount('main')
+  $router.start()
+});
+```
+
+```text
+$ mkdir -p app/assets/javascripts/components/visitors
+$ touch app/assets/javascripts/components/visitors/list.es6
+```
+
+Add these lines to `app/assets/javascripts/components/visitors/list.es6`:
+
+```javascript
+var Visitors = Visitors || {}
+
+;((namespace) => {
+
+  class List extends Cape.Component {
+    init() {
+      this.agent = new VisitorListAgent(this)
+      this.agent.refresh()
+    }
+
+    render(m) {
+      m.ol(m => {
+        this.agent.objects.forEach(visitor => {
+          m.li(`${visitor.family_name}, ${visitor.given_name}`)
+        })
+      })
+      m.div(m => {
+        m.onclick(e => $router.navigateTo('')).btn('Return to the top page')
+      })
+    }
+  }
+
+  namespace.List = List
+
+})(Visitors)
+```
+
+Edit `app/assets/javascripts/components/reception.es6`:
+
+```javascript
+class Reception extends Cape.Component {
+  render(m) {
+    m.p("Hi, I am Greeter. Nice to meet you!")
+    m.div(m => {
+      m.onclick(e => $router.navigateTo('visitor_form'))
+        .btn('Proceed to the Entry Form')
+    })
+    m.div(m => {
+      m.onclick(e => $router.navigateTo('visitors'))
+        .btn('Show the list of registered visitors')
+    })
+  }
+}
+```
+
+Reload your browser and click the second button to see the the list of registered visitors.

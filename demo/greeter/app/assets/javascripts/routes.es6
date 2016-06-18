@@ -1,12 +1,13 @@
-window.router = new Cape.Router()
+var $router = new Cape.Router()
 
-router.draw(m => {
+$router.draw(m => {
   m.root('reception')
   m.page('visitor_form')
   m.page('thanks')
+  m.many('visitors', { only: [ 'index'] })
 })
 
 document.addEventListener("DOMContentLoaded", event => {
-  window.router.mount('main')
-  window.router.start()
+  $router.mount('main')
+  $router.start()
 })

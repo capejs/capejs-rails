@@ -1,9 +1,9 @@
 class ErrorMessageList extends Cape.Partial {
   render(m) {
     m.div({ class: 'error-message' }, m => {
-      m.p("Please fill in your name on this form.")
+      m.p("You have errors. Please fix them and submit again.")
       m.ul(m => {
-        this.errors.forEach(err => {
+        this.parent.errors.forEach(err => {
           m.li(err)
         })
       })

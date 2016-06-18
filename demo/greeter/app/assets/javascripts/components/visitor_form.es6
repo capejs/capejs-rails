@@ -7,7 +7,7 @@ class VisitorForm extends Cape.Component {
 
   render(m) {
     m.h2('Visitors Entry Form')
-    m.p("You have errors. Please fix them and submit again.")
+    m.p("Please fill in your name on this form.")
     if (this.errors) this.errorMessageList.render(m)
     m.formFor('visitor', m => {
       m.div(m => {
@@ -23,7 +23,7 @@ class VisitorForm extends Cape.Component {
   submit() {
     this.agent.create(this.paramsFor('visitor'), data => {
       if (data.result === 'Success') {
-        window.router.navigateTo('thanks')
+        $router.navigateTo('thanks')
       }
       else {
         this.errors = data.errors
