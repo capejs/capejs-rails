@@ -12,22 +12,27 @@ $ rails -v # Must be 5.0.0.rc1
 ## Creating the Rails app skeleton
 
 ```text
-$ rails new greeter -BJT
+$ rails new greeter -BT
 ```
 
 The meaning of options:
 
 * `-B`: Don't run bundle install (`--skip-bundle`)
-* `-J`: Skip javascript files (`--skip-javascript`)
 * `-T`: Skip test files (`--skip-test`)
 
 ## Setting up the `capejs-rails`
 
-Remove this line from the `Gemfile`:
+Remove these lines from the `Gemfile`:
 
 ```ruby
 gem 'sass-rails', '~> 5.0'
+gem 'coffee-rails', '~> 4.1.0'
+gem 'jquery-rails'
+gem 'turbolinks', '~> 5.x'
 ```
+
+Note that you can keep `coffee-rails`, `jquery-rails` and `turbolinks`.
+We remove them in order to demonstrate that Cape.JS does _not_ depend on jQuery.
 
 Add these lines to the `Gemfile`:
 
@@ -43,35 +48,17 @@ gem 'babel-transpiler'
 $ bin/bundle
 ```
 
-## Creating `application.js`
+## Editing `application.js`
 
-```text
-$ mkdir -p app/assets/javascripts
-$ touch app/assets/javascripts/application.js
-```
-
-Add this line to `app/assets/javascripts/application.js`:
+Edit `app/assets/javascripts/application.js` so that its content becomes as follows:
 
 ```javascript
 //= require cape
 //= require_tree .
 ```
 
-## Editing `manifest.js`
-
-Add this line to `app/assets/config/manifest.js`:
-
-```javascript
-//= link_directory ../javascripts .js
-```
-
-## Editing `application.html.erb`
-
-Add this line to the bottom of `<head>` element's content:
-
-```erb
-    <%= javascript_include_tag 'application' %>
-```
+We removed three lines that require `jquery`, `jquery_ujs` and `turbolinks`.
+Keep them if you kept `jquery-rails` and `turbolinks` on `Gemfile`.
 
 ## Creating `generators.rb`
 
