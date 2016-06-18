@@ -1,4 +1,6 @@
-# Tutorial for making a single page app with `capejs-rails` gem
+# How to Make a Single Page Application (SPA) with Cape.JS and Rails
+
+This tutorial is based on the [Cape.JS](https://github.com/oiax/capejs) 1.5 and [Ruby on Rails](https://github.com/rails/rails) 5.0.0.rc1.
 
 ## Checking required softwares
 
@@ -6,8 +8,6 @@
 $ ruby -v # Must be 2.2.2 or higher
 $ rails -v # Must be 5.0.0.rc1
 ```
-
-This tutorial is based on the Ruby on Rails 5.0.0.rc1.
 
 ## Creating the Rails app skeleton
 
@@ -55,3 +55,52 @@ Add this line to the `app/assets/javascripts/application.js`:
 ```javascript
 //= require cape
 ```
+
+## Creating `generators.rb`
+
+```text
+$ touch config/initializers/generators.rb
+```
+
+Add these lines to the `config/initializers/generators.rb`:
+
+```ruby
+Rails.application.config.generators do |g|
+  g.helper false
+  g.assets false
+  g.test_framework false
+  g.skip_routes true
+end
+```
+
+## Add a route to the `top#index` action
+
+Edit the `config/routes.rb` so that its content becomes like as:
+
+```ruby
+Rails.application.routes.draw do
+  root 'top#index'
+end
+```
+
+## Creating the `top#index` action
+
+```text
+$ bin/rails g controller top index
+```
+
+Edit the `app/views/top/index.html.erb` so that its content becomes like as:
+
+```ruby
+<h1>Greeter</h1>
+<div id='main'></div>
+```
+
+## Starting the server
+
+```text
+$ bin/rails s
+```
+
+Open `http://localhost:3000/` with your browser to see if the page is rendered without errors.
+It should has just a single "Greeter" heading.
