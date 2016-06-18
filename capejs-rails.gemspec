@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = [ 'Tsutomu Kuroda' ]
   s.email       = [ 't-kuroda@oiax.jp' ]
-  s.homepage    = 'https://github.com/oiax/capejs-rails'
+  s.homepage    = 'https://github.com/capejs/capejs-rails'
   s.summary     = 'Use Cape.JS with Rails'
   s.description = 'This gem provides Cape.JS for your Rails application.'
   s.license     = 'MIT'

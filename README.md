@@ -2,7 +2,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/capejs-rails.svg)](https://badge.fury.io/rb/capejs-rails)
 
-This gem wraps the [Cape.JS](https://github.com/oiax/capejs) for use in Rails 4.2 and above.
+This gem wraps the [Cape.JS](https://github.com/capejs/capejs) for use in Rails 4.2 and above.
 
 ## Usage
 
