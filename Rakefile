@@ -4,7 +4,7 @@ Bundler::GemHelper.install_tasks
 desc "Update Cape.JS version"
 task :update do
   puts "Downloading cape.js"
-  source = "https://raw.githubusercontent.com/oiax/capejs/v#{CapeJS::Rails::CAPEJS_VERSION}/dist/cape.js"
+  source = "https://raw.githubusercontent.com/capejs/capejs/v#{CapeJS::Rails::CAPEJS_VERSION}/dist/cape.js"
   target = "app/assets/javascripts/cape.js"
   puts `curl -o #{target} #{source}`
   File.open(target, 'a') do |f|
